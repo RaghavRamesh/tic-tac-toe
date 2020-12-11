@@ -5,10 +5,46 @@ import Board from './Board'
 class TicTacToe extends Component {
   constructor(props) {
     super(props);
+    const {
+      boxes, nextTurn, isGameOver, winner
+    } = props;
     this.state = {
-      boxes: props.boxes
-    }
+      boxes,
+      whoIsPlaying: nextTurn,
+      isGameOver,
+      winner,
+      player: null,
+      refresher: null
+    };
     this.handleClick = this.handleClick.bind(this);
+  }
+
+  componentDidMount() {
+    setInterval(() => {
+      fetch('http://localhost:3000/refresh')
+        .then(response => response.json())
+        .then(({ data }) => {
+          console.log(data);
+          this.updateGameState(data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        })
+    }, 1000)
+  }
+
+  updateGameState(data) {
+    const { boxes, nextTurn, isGameOver, winner } = data;
+    this.setState({
+      boxes,
+      whoIsPlaying: nextTurn,
+      isGameOver,
+      winner
+    })
+  }
+
+  setPlayer(player) {
+    this.setState({player});
   }
 
   handleClick(boxId) {
@@ -16,13 +52,13 @@ class TicTacToe extends Component {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        player: 1,
+        player: this.state.whoIsPlaying,
         box: boxId
       })
     })
       .then(response => response.json())
       .then(({ data }) => {
-        this.setState({ boxes: data.boxes})
+        this.updateGameState(data);
       })
       .catch((error) => {
         console.error("Error:", error)
@@ -30,16 +66,36 @@ class TicTacToe extends Component {
   }
 
   render() {
-    const { boxes } = this.state
+    const { boxes, winner, isGameOver, whoIsPlaying } = this.state
     return (
-      <Board boxes={boxes} handleClick={this.handleClick} />
+      <>
+        <h1>{isGameOver ? `${winner} wins!` : `${whoIsPlaying}'s turn`}</h1>
+        <button onClick={() => {
+          this.setPlayer('X')
+        }}>
+          X
+        </button>
+        <button onClick={() => {
+          this.setPlayer('O')
+        }}>
+          O
+        </button>
+        <Board
+          boxes={boxes}
+          handleClick={this.handleClick}
+          disableButtons={isGameOver || (this.state.whoIsPlaying !== this.state.player)}
+        />
+      </>
     );
   }
 }
  
-function mapStateToProps({ isFetching, boxes }) {
+function mapStateToProps({ boxes, isGameOver, winner, nextTurn }) {
   return {
-    boxes
+    boxes,
+    isGameOver,
+    winner,
+    nextTurn
   }
 }
  

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Board = ({ boxes, handleClick }) => {
+const Board = ({ boxes, handleClick, disableButtons }) => {
   console.log('[Board] boxes:', boxes);
   const boxElements = boxes.map((box, index) => {
     return (
@@ -10,8 +10,9 @@ const Board = ({ boxes, handleClick }) => {
           handleClick(index);
         }}
         key={index}
+        disabled={disableButtons || box !== null}
       >
-        {box}
+        {box || " "}
       </button>
     );
   });
