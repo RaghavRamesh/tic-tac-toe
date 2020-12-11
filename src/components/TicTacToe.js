@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import Board from './Board'
 
 class TicTacToe extends Component {
@@ -17,6 +16,7 @@ class TicTacToe extends Component {
       refresher: null
     };
     this.handleClick = this.handleClick.bind(this);
+    this.setPlayer = this.setPlayer.bind(this);
   }
 
   componentDidMount() {
@@ -24,7 +24,6 @@ class TicTacToe extends Component {
       fetch('http://localhost:3000/refresh')
         .then(response => response.json())
         .then(({ data }) => {
-          console.log(data);
           this.updateGameState(data);
         })
         .catch((error) => {
@@ -43,8 +42,8 @@ class TicTacToe extends Component {
     })
   }
 
-  setPlayer(player) {
-    this.setState({player});
+  setPlayer(event) {
+    this.setState({player:event.target.value});
   }
 
   handleClick(boxId) {
@@ -70,16 +69,12 @@ class TicTacToe extends Component {
     return (
       <>
         <h1>{isGameOver ? `${winner} wins!` : `${whoIsPlaying}'s turn`}</h1>
-        <button onClick={() => {
-          this.setPlayer('X')
-        }}>
-          X
-        </button>
-        <button onClick={() => {
-          this.setPlayer('O')
-        }}>
-          O
-        </button>
+        <div onChange={this.setPlayer}>
+          <input type="radio" id="x-button" name="player" value="X" />
+          <label htmlFor="x-button">X</label>
+          <input type="radio" id="o-button" name="player" value="O" />
+          <label htmlFor="o-button">O</label>
+        </div>
         <Board
           boxes={boxes}
           handleClick={this.handleClick}
@@ -90,13 +85,4 @@ class TicTacToe extends Component {
   }
 }
  
-function mapStateToProps({ boxes, isGameOver, winner, nextTurn }) {
-  return {
-    boxes,
-    isGameOver,
-    winner,
-    nextTurn
-  }
-}
- 
-export default connect(mapStateToProps)(TicTacToe)
+export default TicTacToe;

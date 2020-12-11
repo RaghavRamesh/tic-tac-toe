@@ -25,8 +25,8 @@ const gameState = {
 }
 
 app.get('/', (req, res) => {
-  const { preloadedState, content}  = ssr(gameState)
-  const response = template("Server Rendered Page", preloadedState, content)
+  const content  = ssr(gameState)
+  const response = template("Tic Tac Toe", gameState, content)
   res.setHeader('Cache-Control', 'assets, max-age=604800')
   res.send(response);
 });
