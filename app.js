@@ -17,11 +17,11 @@ app.disable('x-powered-by');
 // start the server
 app.listen(process.env.PORT || 3000);
 
-const gameState = {
+let gameState = {
   boxes: Array(9).fill(null),
   isGameOver: false,
   winner: null,
-  nextTurn: 'X'
+  nextTurn: 'X',
 }
 
 app.get('/', (req, res) => {
@@ -35,7 +35,7 @@ app.get('/refresh', (req, res) => {
   res.send({ data: gameState });
 });
 
-app.post("/click", function (req, res) {
+app.post("/click", (req, res) => {
   const data = req.body;
   gameState.boxes[data.box] = data.player;
   if (isGameOver()) {
@@ -48,14 +48,24 @@ app.post("/click", function (req, res) {
   res.send({ data: gameState });
 });
 
+app.get('/play-again', (req, res) => {
+  gameState = {
+    boxes: Array(9).fill(null),
+    isGameOver: false,
+    winner: null,
+    nextTurn: 'X',
+  };
+  res.send({ data: gameState });
+});
+
 const isGameOver = () => {
   const boxes = gameState.boxes;
-  return ((boxes[0] === boxes[1]) && (boxes[0] === boxes[2]) && (boxes[0] !== null))
-    || ((boxes[3] === boxes[4]) && (boxes[3] === boxes[5]) && (boxes[3] !== null))
-    || ((boxes[6] === boxes[7]) && (boxes[6] === boxes[8]) && (boxes[6] !== null))
-    || ((boxes[0] === boxes[3]) && (boxes[0] === boxes[6]) && (boxes[0] !== null))
-    || ((boxes[1] === boxes[4]) && (boxes[1] === boxes[7]) && (boxes[1] !== null))
-    || ((boxes[2] === boxes[5]) && (boxes[2] === boxes[8]) && (boxes[2] !== null))
-    || ((boxes[0] === boxes[4]) && (boxes[0] === boxes[8]) && (boxes[0] !== null))
-    || ((boxes[2] === boxes[4]) && (boxes[2] === boxes[6]) && (boxes[2] !== null));
+  return ((boxes[0] === boxes[1]) && (boxes[0] === boxes[2]) && (boxes[0] !== null)) // row 1
+    || ((boxes[3] === boxes[4]) && (boxes[3] === boxes[5]) && (boxes[3] !== null)) // row 2
+    || ((boxes[6] === boxes[7]) && (boxes[6] === boxes[8]) && (boxes[6] !== null)) // row 3
+    || ((boxes[0] === boxes[3]) && (boxes[0] === boxes[6]) && (boxes[0] !== null)) // col 1
+    || ((boxes[1] === boxes[4]) && (boxes[1] === boxes[7]) && (boxes[1] !== null)) // col 2
+    || ((boxes[2] === boxes[5]) && (boxes[2] === boxes[8]) && (boxes[2] !== null)) // col 3
+    || ((boxes[0] === boxes[4]) && (boxes[0] === boxes[8]) && (boxes[0] !== null)) // diag 1
+    || ((boxes[2] === boxes[4]) && (boxes[2] === boxes[6]) && (boxes[2] !== null)); // diag 2
 }
