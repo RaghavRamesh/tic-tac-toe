@@ -20,7 +20,7 @@ class TicTacToe extends Component {
   }
 
   componentDidMount() {
-    setInterval(() => {
+    const refresher = setInterval(() => {
       fetch('http://localhost:3000/refresh')
         .then(response => response.json())
         .then(({ data }) => {
@@ -30,6 +30,7 @@ class TicTacToe extends Component {
           console.error("Error:", error);
         })
     }, 1000)
+    this.setState({ refresher });
   }
 
   updateGameState(data) {
@@ -38,8 +39,12 @@ class TicTacToe extends Component {
       boxes,
       whoIsPlaying: nextTurn,
       isGameOver,
-      winner
+      winner,
     })
+    if (isGameOver) {
+      clearInterval(this.state.refresher);
+      this.setState({ refresher: null });
+    }
   }
 
   setPlayer(event) {
