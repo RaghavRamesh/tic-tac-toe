@@ -5,13 +5,13 @@ class TicTacToe extends Component {
   constructor(props) {
     super(props);
     const {
-      boxes, nextTurn, isGameOver, winner
+      boxes, nextTurn, isGameOver, result
     } = props;
     this.state = {
       boxes,
       whoIsPlaying: nextTurn,
       isGameOver,
-      winner,
+      result,
       player: null,
       refresher: null
     };
@@ -22,27 +22,32 @@ class TicTacToe extends Component {
 
   componentDidMount() {
     const refresher = setInterval(() => {
-      fetch('http://localhost:3000/refresh')
-        .then(response => response.json())
-        .then(({ data }) => {
-          this.updateGameState(data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        })
+      this.refreshGame()
     }, 1000)
     this.setState({ refresher });
   }
 
+  refreshGame() {
+    fetch('http://localhost:3000/refresh')
+      .then(response => response.json())
+      .then(({ data }) => {
+        this.updateGameState(data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      })
+  }
+
   updateGameState(data) {
-    const { boxes, nextTurn, isGameOver, winner } = data;
+    const { boxes, nextTurn, isGameOver, result } = data;
     this.setState({
       boxes,
       whoIsPlaying: nextTurn,
       isGameOver,
-      winner
+      result
     })
     if (isGameOver) {
+      this.refreshGame()
       clearInterval(this.state.refresher);
       this.setState({ refresher: null });
     }
@@ -81,22 +86,34 @@ class TicTacToe extends Component {
       });
   }
 
+  renderResult() {
+    const { result, isGameOver, whoIsPlaying } = this.state;
+    if (isGameOver) {
+      if (result === 'draw') {
+        return <h1>It's a draw!</h1>;
+      } else {
+        return <h1>{`${result} wins!`}</h1>
+      }
+    }
+    return <h1>{`${whoIsPlaying}'s turn`}</h1>
+  }
+
   render() {
-    const { boxes, winner, isGameOver, whoIsPlaying } = this.state
+    const { boxes, player, isGameOver, whoIsPlaying } = this.state;
     return (
       <>
-        <h1>{isGameOver ? `${winner} wins!` : `${whoIsPlaying}'s turn`}</h1>
+        {this.renderResult()}
         <button onClick={this.playAgain}>Next game</button>
-        <div onChange={this.setPlayer}>
-          <input type="radio" id="x-button" name="player" value="X" checked={this.state.player === 'X'} />
+        <div>
+          <input type="radio" onChange={this.setPlayer} id="x-button" name="player" value="X" checked={player === 'X'} />
           <label htmlFor="x-button">X</label>
-          <input type="radio" id="o-button" name="player" value="O" checked={this.state.player === 'O'} />
+          <input type="radio" onChange={this.setPlayer} id="o-button" name="player" value="O" checked={player === 'O'} />
           <label htmlFor="o-button">O</label>
         </div>
         <Board
           boxes={boxes}
           handleClick={this.handleBoxClick}
-          disableButtons={isGameOver || (this.state.whoIsPlaying !== this.state.player)}
+          disableButtons={isGameOver || (whoIsPlaying !== player)}
         />
       </>
     );
