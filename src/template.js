@@ -1,7 +1,10 @@
 // html skeleton provider
 export default function template(title, initialState = {}, content = "") {
-  const scripts = `<script>
+  const scripts = `<script src="/socket.io/socket.io.js"></script>
+                   <script>
                      window.__STATE__ = ${JSON.stringify(initialState)}
+                     var socket = io();
+                     window.__SOCKET__ = socket;
                    </script>
                    <script src="assets/client.js"></script>
                   `

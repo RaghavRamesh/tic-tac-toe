@@ -13,7 +13,7 @@ class TicTacToe extends Component {
       isGameOver,
       result,
       player: null,
-      refresher: null
+      // refresher: null
     };
     this.handleBoxClick = this.handleBoxClick.bind(this);
     this.playAgain = this.playAgain.bind(this);
@@ -21,10 +21,13 @@ class TicTacToe extends Component {
   }
 
   componentDidMount() {
-    const refresher = setInterval(() => {
-      this.refreshGame()
-    }, 1000)
-    this.setState({ refresher });
+    // const refresher = setInterval(() => {
+    //   this.refreshGame()
+    // }, 10000)
+    // this.setState({ refresher });
+    this.props.socket.on('game-state-update', ({ gameState }) => {
+      this.updateGameState(gameState);
+    })
   }
 
   refreshGame() {
@@ -46,11 +49,11 @@ class TicTacToe extends Component {
       isGameOver,
       result
     })
-    if (isGameOver) {
-      this.refreshGame()
-      clearInterval(this.state.refresher);
-      this.setState({ refresher: null });
-    }
+    // if (isGameOver) {
+    //   this.refreshGame()
+    //   clearInterval(this.state.refresher);
+    //   this.setState({ refresher: null });
+    // }
   }
 
   setPlayer(event) {
@@ -76,7 +79,10 @@ class TicTacToe extends Component {
   }
 
   playAgain() {
-    fetch('http://localhost:3000/play-again')
+    fetch('http://localhost:3000/play-again', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'}
+    })
       .then(response => response.json())
       .then(({ data }) => {
         this.updateGameState(data);

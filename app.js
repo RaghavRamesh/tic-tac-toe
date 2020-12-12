@@ -1,21 +1,24 @@
 import express from 'express'
+import http from 'http';
+import socketio from 'socket.io';
 import bodyParser from 'body-parser'
 import path from 'path'
 import template from './src/template'
 import ssr from './src/server'
 
 const app = express()
+const httpServer = http.createServer(app)
+const io = socketio(httpServer);
 
 // Serving static files
 app.use('/assets', express.static(path.resolve(__dirname, 'assets')));
-app.use('/media', express.static(path.resolve(__dirname, 'media')));
-app.use(bodyParser.json()); // for parsing application/json
-
-
+// for parsing application/json
+app.use(bodyParser.json());
 // hide powered by express
 app.disable('x-powered-by');
+
 // start the server
-app.listen(process.env.PORT || 3000);
+httpServer.listen(process.env.PORT || 3000);
 
 let gameState = {
   boxes: Array(9).fill(null),
@@ -48,9 +51,10 @@ app.post("/click", (req, res) => {
     gameState.nextTurn = gameState.nextTurn === 'X' ? 'O' : 'X';
   }
   res.send({ data: gameState });
+  io.emit('game-state-update', { gameState });
 });
 
-app.get('/play-again', (req, res) => {
+app.post('/play-again', (req, res) => {
   gameState = {
     boxes: Array(9).fill(null),
     isGameOver: false,
@@ -58,6 +62,7 @@ app.get('/play-again', (req, res) => {
     nextTurn: 'X',
   };
   res.send({ data: gameState });
+  io.emit('game-state-update', { gameState });
 });
 
 const isGameOver = () => {

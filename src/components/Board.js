@@ -1,7 +1,6 @@
 import React from 'react';
 
 const Board = ({ boxes, handleClick, disableButtons }) => {
-  console.log('[Board] boxes:', boxes);
   const boxElements = boxes.map((box, index) => {
     return (
       <button

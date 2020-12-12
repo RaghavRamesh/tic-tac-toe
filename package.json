@@ -1,7 +1,7 @@
 {
-  "name": "myssr",
+  "name": "tic-tac-toe",
   "version": "1.0.0",
-  "description": "",
+  "description": "A React-NodeJS-SocketIO based Tic-Tac-Toe",
   "main": "index.js",
   "scripts": {
     "start": "yarn build && node index.js",
@@ -11,7 +11,8 @@
     "@babel/register": "^7.8.6",
     "express": "^4.17.1",
     "react": "^16.13.0",
-    "react-dom": "^16.13.0"
+    "react-dom": "^16.13.0",
+    "socket.io": "^3.0.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
