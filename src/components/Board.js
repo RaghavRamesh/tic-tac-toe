@@ -19,7 +19,7 @@ const Board = ({ boxes, handleClick, disableButtons }) => {
           fontSize: '48px',
           color: 'white',
           border: "2px solid #ddd",
-          padding: 0
+          padding: 0,
         }}
         onClick={() => {
           handleClick(index);
@@ -41,7 +41,8 @@ const Board = ({ boxes, handleClick, disableButtons }) => {
         height: "458px",
         display: "grid",
         gridTemplateColumns: "150px 150px 150px",
-        gridTemplateRows: "150px 150px 150px"
+        gridTemplateRows: "150px 150px 150px",
+        marginBottom: '24px'
       }}
     >
       {boxElements}

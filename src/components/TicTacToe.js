@@ -94,21 +94,24 @@ class TicTacToe extends Component {
 
   renderResult() {
     const { result, isGameOver, whoIsPlaying } = this.state;
+    const style = {
+      textAlign: 'center'
+    };
     if (isGameOver) {
       if (result === 'draw') {
-        return <h1>It's a draw!</h1>;
+        return <h2 style={style}>It's a draw!</h2>;
       } else {
-        return <h1>{`${result} wins!`}</h1>
+        return <h2 style={style}>{`${result} wins!`}</h2>
       }
     }
-    return <h1>{`${whoIsPlaying}'s turn`}</h1>
+    return <h2 style={style}>{`${whoIsPlaying}'s turn`}</h2>
   }
 
   render() {
     const { boxes, player, isGameOver, whoIsPlaying } = this.state;
     return (
       <>
-        {this.renderResult()}
+        <h1 style={{ textAlign: 'center', fontWeight: 'bold' }}>Tic Tac Toe</h1>
         <div style={{
           display: "flex",
           justifyContent: "space-between",
@@ -127,6 +130,7 @@ class TicTacToe extends Component {
           handleClick={this.handleBoxClick}
           disableButtons={isGameOver || (whoIsPlaying !== player)}
         />
+        {this.renderResult()}
       </>
     );
   }

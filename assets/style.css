@@ -279,6 +279,7 @@ a:hover {
   padding-top: 48px;
   padding-bottom: 48px;
   height: 100vh;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .row {
