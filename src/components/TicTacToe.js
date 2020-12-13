@@ -109,12 +109,18 @@ class TicTacToe extends Component {
     return (
       <>
         {this.renderResult()}
-        <button onClick={this.playAgain}>Next game</button>
-        <div>
-          <input type="radio" onChange={this.setPlayer} id="x-button" name="player" value="X" checked={player === 'X'} />
-          <label htmlFor="x-button">X</label>
-          <input type="radio" onChange={this.setPlayer} id="o-button" name="player" value="O" checked={player === 'O'} />
-          <label htmlFor="o-button">O</label>
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: "12px"
+        }}>
+          <div>
+            <input type="radio" onChange={this.setPlayer} id="x-button" name="player" value="X" checked={player === 'X'} />
+            <label htmlFor="x-button">X</label>
+            <input type="radio" onChange={this.setPlayer} id="o-button" name="player" value="O" checked={player === 'O'} />
+            <label htmlFor="o-button">O</label>
+          </div>
+          <button onClick={this.playAgain} style={{cursor: 'pointer'}}>Next game</button>
         </div>
         <Board
           boxes={boxes}
