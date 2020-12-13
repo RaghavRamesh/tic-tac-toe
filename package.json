@@ -4,7 +4,7 @@
   "description": "A React-NodeJS-SocketIO based Tic-Tac-Toe",
   "main": "index.js",
   "scripts": {
-    "start": "npm i && npm run build && node index.js",
+    "start": "node index.js",
     "build": "webpack --config webpack.config.js"
   },
   "dependencies": {
