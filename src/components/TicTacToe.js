@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
+import InputForm from './InputForm'
 import Board from './Board'
 
 class TicTacToe extends Component {
   constructor(props) {
     super(props);
     const {
-      boxes, nextTurn, isGameOver, result
+      boxes, nextTurn, isGameOver, result, gameId
     } = props;
     this.state = {
       boxes,
@@ -13,7 +14,7 @@ class TicTacToe extends Component {
       isGameOver,
       result,
       player: null,
-      // refresher: null
+      gameId
     };
     this.handleBoxClick = this.handleBoxClick.bind(this);
     this.playAgain = this.playAgain.bind(this);
@@ -21,25 +22,10 @@ class TicTacToe extends Component {
   }
 
   componentDidMount() {
-    // const refresher = setInterval(() => {
-    //   this.refreshGame()
-    // }, 10000)
-    // this.setState({ refresher });
     this.props.socket.on('game-state-update', ({ gameState }) => {
       this.updateGameState(gameState);
     })
   }
-
-  // refreshGame() {
-  //   fetch('http://localhost:3000/refresh')
-  //     .then(response => response.json())
-  //     .then(({ data }) => {
-  //       this.updateGameState(data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error:", error);
-  //     })
-  // }
 
   updateGameState(data) {
     const { boxes, nextTurn, isGameOver, result } = data;
@@ -49,11 +35,6 @@ class TicTacToe extends Component {
       isGameOver,
       result
     })
-    // if (isGameOver) {
-    //   this.refreshGame()
-    //   clearInterval(this.state.refresher);
-    //   this.setState({ refresher: null });
-    // }
   }
 
   setPlayer(event) {
@@ -61,11 +42,17 @@ class TicTacToe extends Component {
   }
 
   handleBoxClick(boxId) {
-    fetch('/click', {
+    const {
+      gameId,
+      whoIsPlaying
+    } = this.state;
+
+    fetch('/api/select-box', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        player: this.state.whoIsPlaying,
+        gameId,
+        player: whoIsPlaying,
         box: boxId
       })
     })
@@ -79,9 +66,12 @@ class TicTacToe extends Component {
   }
 
   playAgain() {
-    fetch('/play-again', {
+    fetch('/api/play-again', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'}
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        gameId: this.state.gameId
+      })
     })
       .then(response => response.json())
       .then(({ data }) => {
@@ -112,25 +102,31 @@ class TicTacToe extends Component {
     return (
       <>
         <h1 style={{ textAlign: 'center', fontWeight: 'bold' }}>Tic Tac Toe</h1>
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: "12px"
-        }}>
-          <div>
-            <input type="radio" onChange={this.setPlayer} id="x-button" name="player" value="X" checked={player === 'X'} />
-            <label htmlFor="x-button">X</label>
-            <input type="radio" onChange={this.setPlayer} id="o-button" name="player" value="O" checked={player === 'O'} />
-            <label htmlFor="o-button">O</label>
-          </div>
-          <button onClick={this.playAgain} style={{cursor: 'pointer'}}>Next game</button>
-        </div>
-        <Board
-          boxes={boxes}
-          handleClick={this.handleBoxClick}
-          disableButtons={isGameOver || (whoIsPlaying !== player)}
-        />
-        {this.renderResult()}
+        {!this.props.isGame ? (
+          <InputForm />
+        ) : (
+          <>
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: "12px"
+            }}>
+              <div>
+                <input type="radio" onChange={this.setPlayer} id="x-button" name="player" value="X" checked={player === 'X'} />
+                <label htmlFor="x-button">X</label>
+                <input type="radio" onChange={this.setPlayer} id="o-button" name="player" value="O" checked={player === 'O'} />
+                <label htmlFor="o-button">O</label>
+              </div>
+              <button onClick={this.playAgain} style={{cursor: 'pointer'}}>Next game</button>
+            </div>
+            <Board
+              boxes={boxes}
+              handleClick={this.handleBoxClick}
+              disableButtons={isGameOver || (whoIsPlaying !== player)}
+            />
+            {this.renderResult()}
+          </>
+        )}
       </>
     );
   }
