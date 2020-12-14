@@ -65,7 +65,7 @@ app.post("/api/select-box", (req, res) => {
   // deep copy
   const gameState = JSON.parse(JSON.stringify(gamesStates.get(gameId)));
   gameState.boxes[box] = player;
-  const [over, result] = isGameOver(gameId);
+  const [over, result] = isGameOver(gameState.boxes);
   if (over) {
     gameState.result = result === 'draw' ? 'draw' : gameState.nextTurn;
     gameState.isGameOver = true;
@@ -78,6 +78,7 @@ app.post("/api/select-box", (req, res) => {
   // update server gamesStates
   gamesStates.set(gameId, gameState);
   res.send({ data: gameState });
+  console.log('[sb] gamesStates:', gamesStates)
   io.emit('game-state-update', { gameState });
 });
 
@@ -93,8 +94,7 @@ app.post('/api/play-again', (req, res) => {
 
 // TODO: clean up game states if last interaction was greater than 6 hours ago
 
-const isGameOver = (gameId) => {
-  const boxes = gamesStates.get(gameId).boxes;
+const isGameOver = (boxes) => {
   if (((boxes[0] === boxes[1]) && (boxes[0] === boxes[2]) && (boxes[0] !== null)) // row 1
     || ((boxes[3] === boxes[4]) && (boxes[3] === boxes[5]) && (boxes[3] !== null)) // row 2
     || ((boxes[6] === boxes[7]) && (boxes[6] === boxes[8]) && (boxes[6] !== null)) // row 3
