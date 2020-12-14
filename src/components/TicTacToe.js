@@ -141,6 +141,18 @@ class TicTacToe extends Component {
               disableButtons={isGameOver || (whoIsPlaying !== player)}
             />
             {this.renderResult()}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                fontSize: '12px',
+                fontFamily: 'verdana',
+              }}
+            >
+              <a style={{ color: '#ccc' }} href="https://www.buymeacoffee.com/raghavramesh">
+                Buy the developer a coffee
+              </a>
+            </div>
           </>
         )}
       </>
