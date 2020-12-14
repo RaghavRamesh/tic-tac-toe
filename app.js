@@ -38,22 +38,19 @@ gamesStates.set('test', {
 app.get('/', (req, res) => {
   const content  = ssr({ isGame: false })
   const response = template({ isGame: false }, content)
-  console.log('[/] gamesStates:', gamesStates);
   res.send(response);
 });
 
 app.get('/game/:gameId', (req, res) => {
   // TODO: validate gameId
   // if games[gameId] doesn't exist, initialize and return initial state
-  const gameId = req.params.gameId;
-  console.log(`[/game/${gameId}] gamesStates:`, gamesStates);
+  const gameId = req.params.gameId.toLowerCase();
   if (!gamesStates.has(gameId)) {
     gamesStates.set(gameId, { ...initialGameState, gameId });
   }
   const gameState = gamesStates.get(gameId);
   const content  = ssr(gameState)
   const response = template(gameState, content)
-  console.log(`[/game/${gameId}] gamesStates:`, gamesStates);
   res.send(response);
 });
 
@@ -78,7 +75,6 @@ app.post("/api/select-box", (req, res) => {
   // update server gamesStates
   gamesStates.set(gameId, gameState);
   res.send({ data: gameState });
-  console.log('[sb] gamesStates:', gamesStates)
   io.emit('game-state-update', { gameState });
 });
 

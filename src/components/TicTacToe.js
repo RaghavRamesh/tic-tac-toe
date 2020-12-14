@@ -98,7 +98,7 @@ class TicTacToe extends Component {
   }
 
   render() {
-    const { boxes, player, isGameOver, whoIsPlaying } = this.state;
+    const { boxes, player, isGameOver, whoIsPlaying, gameId } = this.state;
     return (
       <>
         <h1 style={{ textAlign: 'center', fontWeight: 'bold' }}>Tic Tac Toe</h1>
@@ -106,6 +106,22 @@ class TicTacToe extends Component {
           <InputForm />
         ) : (
           <>
+            {typeof(window) != 'undefined' ? (
+              <p
+                style={{
+                  fontFamily: 'verdana',
+                  fontSize: '12px',
+                  color: '#888'
+                }}
+              >Send this link to friends:{' '}
+                <a
+                  href={`${window.location.protocol}//${window.location.host}/game/${gameId}`}
+                >
+                  {`${window.location.protocol}//${window.location.host}/game/${gameId}`}
+                </a>
+              </p>
+            ) : null}
+            <hr />
             <div style={{
               display: "flex",
               justifyContent: "space-between",
