@@ -30,16 +30,16 @@ class TicTacToe extends Component {
     })
   }
 
-  refreshGame() {
-    fetch('http://localhost:3000/refresh')
-      .then(response => response.json())
-      .then(({ data }) => {
-        this.updateGameState(data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      })
-  }
+  // refreshGame() {
+  //   fetch('http://localhost:3000/refresh')
+  //     .then(response => response.json())
+  //     .then(({ data }) => {
+  //       this.updateGameState(data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error:", error);
+  //     })
+  // }
 
   updateGameState(data) {
     const { boxes, nextTurn, isGameOver, result } = data;
@@ -61,7 +61,7 @@ class TicTacToe extends Component {
   }
 
   handleBoxClick(boxId) {
-    fetch('http://localhost:3000/click', {
+    fetch('/click', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -79,7 +79,7 @@ class TicTacToe extends Component {
   }
 
   playAgain() {
-    fetch('http://localhost:3000/play-again', {
+    fetch('/play-again', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'}
     })
