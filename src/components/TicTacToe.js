@@ -14,7 +14,8 @@ class TicTacToe extends Component {
       isGameOver,
       result,
       player: null,
-      gameId
+      gameId,
+      loading: false
     };
     this.handleBoxClick = this.handleBoxClick.bind(this);
     this.playAgain = this.playAgain.bind(this);
@@ -28,12 +29,13 @@ class TicTacToe extends Component {
   }
 
   updateGameState(data) {
-    const { boxes, nextTurn, isGameOver, result } = data;
+    const { boxes, nextTurn, isGameOver, result, loading } = data;
     this.setState({
       boxes,
       whoIsPlaying: nextTurn,
       isGameOver,
-      result
+      result,
+      loading
     })
   }
 
@@ -47,6 +49,7 @@ class TicTacToe extends Component {
       whoIsPlaying
     } = this.state;
 
+    this.setState({ loading: true })
     fetch('/api/select-box', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -58,14 +61,16 @@ class TicTacToe extends Component {
     })
       .then(response => response.json())
       .then(({ data }) => {
-        this.updateGameState(data);
+        this.updateGameState({ ...data, loading: false });
       })
       .catch((error) => {
         console.error("Error:", error)
+        this.setState({ loading: false });
       })
   }
 
   playAgain() {
+    this.setState({ loading: true })
     fetch('/api/play-again', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -75,18 +80,22 @@ class TicTacToe extends Component {
     })
       .then(response => response.json())
       .then(({ data }) => {
-        this.updateGameState(data);
+        this.updateGameState({ ...data, loading: false });
       })
       .catch((error) => {
         console.error("Error:", error);
+        this.setState({ loading: false });
       });
   }
 
   renderResult() {
-    const { result, isGameOver, whoIsPlaying } = this.state;
+    const { result, isGameOver, whoIsPlaying, loading } = this.state;
     const style = {
       textAlign: 'center'
     };
+    if (loading) {
+      return <h2 style={style}>Loading...</h2>;
+    }
     if (isGameOver) {
       if (result === 'draw') {
         return <h2 style={style}>It's a draw!</h2>;
@@ -106,21 +115,26 @@ class TicTacToe extends Component {
           <InputForm />
         ) : (
           <>
-            {typeof(window) != 'undefined' ? (
-              <p
-                style={{
-                  fontFamily: 'verdana',
-                  fontSize: '12px',
-                  color: '#888'
-                }}
-              >Send this link to friends:{' '}
-                <a
-                  href={`${window.location.protocol}//${window.location.host}/game/${gameId}`}
-                >
-                  {`${window.location.protocol}//${window.location.host}/game/${gameId}`}
-                </a>
-              </p>
-            ) : null}
+            <p
+              style={{
+                fontFamily: 'verdana',
+                fontSize: '12px',
+                color: '#888'
+              }}
+            >
+              {typeof(window) != 'undefined' ? (
+                <>
+                  Send this link to friends:{' '}
+                  <a
+                    href={`${window.location.protocol}//${window.location.host}/game/${gameId}`}
+                  >
+                    {`${window.location.protocol}//${window.location.host}/game/${gameId}`}
+                  </a>
+                </>
+              ) : (
+                <>Loading...</>
+              )}
+            </p>
             <hr />
             <div style={{
               display: "flex",
