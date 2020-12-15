@@ -124,7 +124,7 @@ class TicTacToe extends Component {
             >
               {typeof(window) != 'undefined' ? (
                 <>
-                  Send this link to friends:{' '}
+                  Send this link to your opponent:{' '}
                   <a
                     href={`${window.location.protocol}//${window.location.host}/game/${gameId}`}
                   >
