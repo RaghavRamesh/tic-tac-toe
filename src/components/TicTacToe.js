@@ -93,7 +93,7 @@ class TicTacToe extends Component {
     const style = {
       textAlign: 'center'
     };
-    if (loading) {
+    if (loading || typeof(window) == 'undefined') {
       return <h2 style={style}>Loading...</h2>;
     }
     if (isGameOver) {
