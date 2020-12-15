@@ -253,6 +253,7 @@ a:link {
 .content {
   padding-top: 48px;
   padding-bottom: 48px;
+  min-height: 100vh;
   font-family: 'Courier New', Courier, monospace;
   background: whitesmoke;
 }
