@@ -24,6 +24,7 @@ export default function template(initialState = {}, content = "") {
 
                   ${scripts}
                 </body>
+                </html>
                 `;
 
   return page;
